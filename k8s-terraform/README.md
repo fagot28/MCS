@@ -15,5 +15,7 @@ source msc*-openrc.sh
 * пример msc*-openrc.sh в template-openrc.sh
 
 **Выполнить:**
-* terraform plan
-* terraform apply
+```bash
+terraform plan
+terraform apply
+```
