@@ -1,33 +1,15 @@
-# ======================== #
-# VMs configuration        #
-# ======================== #
 
-vm-master-count         = "3"
-vm-worker-count         = "3"
-vm-name-prefix          = "K8S-NODE"
-vm-master-name          = "MASTER"
-vm-worker-name          = "WORKER"
-vm-master-template-name = "K8S-Master-CentOS-7-9-2009-template"
-vm-template-name        = "K8S-CentOS-7-9-2009-template"
-vm-cpu                  = 16
-vm-ram                  = 32768
-vm-hdd-master           = 25
-vm-hdd                  = 100
-vm-scsi                 = "lsilogic"
-vm-guest-id             = "centos64Guest"
+ssh-key-path = "/home/fga/.ssh/id_rsa_mcs"
 
-# ============================ #
-# MCS configuration            #
-# ============================ #
+# VMs configuration -----------------------------------------------------------
+vm-count         = "1"
+vm-instance-name = "test-node1"
+vm-name-prefix   = "node"
+vm-image-name    = "Ubuntu-18.04-Standard"
+vm-image-id      = "d853edd0-27b3-4385-a380-248ac8e40956"
+vm-flavor-name   = "Basic-1-1-10"
+vm-volume-size   = 5
 
-# MCS username used to deploy the infrastructure
-mcs-username = "fadgerman@mail.ru"
-
-# MCS password used to deploy the infrastructure
-mcs-password = "GrendyA4tech"
-
-# MSC project id
-mcs-project-id = "f0f622ba7fc54ea69fd01edc7ef4eb53"
-
-# MCS auth_url "https://infra.mail.ru/identity/v3/"
-mcs-auth-url = "https://infra.mail.ru:35357/v3/"
+vm-cpu = 16
+vm-ram = 32768
+vm-hdd = 100

@@ -1,1 +1,7 @@
+.*
+!/.terraform
 mcs*-openrc.sh
+*.tfstate
+*.tfstate.backup
+*.lock.hcl
+*.lock.info

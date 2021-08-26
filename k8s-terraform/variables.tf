@@ -1,127 +1,85 @@
-#===========================#
-# VMware vCenter connection #
-#===========================#
-
-variable "mcs-username" {
+variable "ssh-private-key-path" {
   type        = string
-  description = "MCS user name"
+  description = "Path to ssh private key"
+  default = "~/.ssh/id_rsa"
 }
 
-variable "mcs-password" {
+variable "ssh-public-key-path" {
   type        = string
-  description = "MCS password"
-  sensitive   = true
+  description = "Path to ssh public key"
+  default = "~/.ssh/id_rsa.pub"
 }
 
-variable "mcs-project-id" {
-  type        = string
-  description = "MCS project id"
+# Эти параметры получаются через переменные окружения, задаваемыми в msc*-openrc.sh
+
+variable "instance_name" {
+  # название создаваемого инстанса
+  default = "terraform-test-1"
 }
 
-variable "mcs-auth-url" {
-  type        = string
-  description = "MCS auth_url"
+variable "password" {
+  # значение OS_PASSWORD. Запрашивается отдельно у mcs support
+  # default = ""
+}
+variable "username" {
+  # default = "user@mail.ru"
 }
 
-variable "mcs-template-folder" {
-  type        = string
-  description = "Template folder"
-  default = "terraform-template"
+variable "user_domain_id" {
+  # значение OS_USER_DOMAIN_ID
+  # default = ""
 }
 
-#================================#
-# MCS virtual machine #
-#================================#
-
-variable "vm-master-count" {
-  type        = string
-  description = "Number of VM"
-  default     =  1
+variable "tenant_id" {
+  # значение OS_PROJECT_ID
+  # default = ""
 }
 
-variable "vm-worker-count" {
-  type        = string
-  description = "Number of VM"
-  default     =  1
+variable "auth_url" {
+  # значение OS_AUTH_URL
+  # default = ""
 }
 
-variable "vm-name-prefix" {
+# K8s cluster variables -----------------------------------------------------------------
+
+variable "k8s-flavor-name" {
   type        = string
-  description = "Name of VM prefix"
-  default     =  "k8s"
+  description = "Type VM of k8s cluster"
+  default = "Standard-2-4-20"
 }
 
-variable "vm-network" {
+variable "k8s-instance-name" {
   type        = string
-  description = "Network used for the mcs virtual machines"
-  default     = "VM Network"
+  description = "Name K8s cluster"
+  default = "terracluster"
 }
 
-variable "vm-linked-clone" {
+variable "k8s-master_count" {
   type        = string
-  description = "Use linked clone to create the mcs virtual machine from the template (true/false). If you would like to use the linked clone feature, your template need to have one and only one snapshot"
-  default     = "false"
+  description = "Count masters in K8s cluster"
+  default = "1"
 }
 
-variable "vm-cpu" {
+variable "k8s-node_count" {
   type        = string
-  description = "Number of vCPU for the mcs virtual machines"
-  default     = "2"
+  description = "Count node in K8s cluster"
+  default = "1"
 }
 
-variable "vm-ram" {
+variable "k8s-node-flavor-id" {
   type        = string
-  description = "Amount of RAM for the mcs virtual machines (example: 2048)"
-  default     = "1024"
+  description = "Node flavor"
+  default = "Basic-1-2-20"
 }
 
-variable "vm-hdd-master" {
+variable "k8s-node-disk-size" {
   type        = string
-  description = "Disk size HDD for the mcs virtual machines (example: 25)"
-  default     = "16"
+  description = "Node disk size"
+  default = "20"
 }
 
-variable "vm-hdd" {
+variable "k8s-node-disk-type" {
   type        = string
-  description = "Disk size HDD for the mcs virtual machines (example: 25)"
-  default     = "16"
-}
-
-variable "vm-scsi" {
-  type        = string
-  description = "The common type of all SCSI controllers on this virtual machine."
-  default     = "pvscsi"
-}
-
-variable "vm-master-name" {
-  type        = string
-  description = "The name of the mcs virtual machines and the hostname of the machine"
-  default     = "master"
-}
-
-variable "vm-worker-name" {
-  type        = string
-  description = "The name of the mcs virtual machines and the hostname of the machine"
-  default     = "worker"
-}
-
-variable "vm-guest-id" {
-  type        = string
-  description = "The ID of virtual machines operating system"
-}
-
-variable "vm-template-name" {
-  type        = string
-  description = "The template to clone to create the VM"
-}
-
-variable "vm-master-template-name" {
-  type        = string
-  description = "The template to clone to create the VM"
-}
-
-variable "vm-domain" {
-  type        = string
-  description = "Linux virtual machine domain name for the machine. This, along with host_name, make up the FQDN of the virtual machine"
-  default     = ""
+  description = "Node disk type"
+  default = "hdd"
 }

@@ -6,11 +6,11 @@ https://mcs.mail.ru/help/ru_RU/k8s-api/k8s-terraform-qs
 
 * **variables.tf** --> variables file
 
-* **terraform.tfvars** --> update MCS credentials and other settings
+* **terraform.tfvars** --> update MCS k8s settings
 
-**Для запуска добавить файл с паролем для доступа в MCS**
-* содержимое secret.tfvars: mcspassword = "пароль"
+**Перед зпуском выполнить source msc*-openrc.sh**
+* пример msc*-openrc.sh в template-openrc.sh
 
 **Выполнить:**
-* terraform plan 
+* terraform plan
 * terraform apply

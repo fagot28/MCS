@@ -12,63 +12,60 @@ terraform {
 
 # Connect to mcs
 provider "mcs" {
-  username   = var.mcs-username
-  password   = var.mcs-password
-  project_id = var.mcs-project-id
-  auth_url   = var.mcs-auth-url
-
+  username   = var.username
+  password   = var.password
+  project_id = var.tenant_id
+  auth_url   = var.auth_url
 }
 
 # Connect to openstack
 provider "openstack" {
-    user_name        = var.mcs-username
-    password         = var.mcs-password
-    auth_url         = var.mcs-auth-url
-    tenant_id        = var.mcs-project-id
-    user_domain_name = "users"
-    region           = "RegionOne"
+  user_name        = var.username
+  password         = var.password
+  tenant_id        = var.tenant_id
+  auth_url         = var.auth_url
+  user_domain_name = "users"
+  region           = "RegionOne"
 }
 
-data "mcs_kubernetes_clustertemplate" "ct1" {
+data "mcs_kubernetes_clustertemplate" "clst1" {
   # версия кластера Kubernetes
   version = "1.20.4"
 }
 
 data "openstack_compute_flavor_v2" "k8s" {
   # тип виртуальной машины
-  name = "Standard-2-4-40"
+  name = var.k8s-flavor-name
 }
 
-# Прочитает существующую ключевую пару, для доступа к атрибутам используйте `data.openstack_compute_keypair_v2.kp`
-# data "openstack_compute_keypair_v2" "kp" {
-#  name = "my-keypair"
-# }
-
-# Создание с существующей парой ключей
-# resource "openstack_compute_keypair_v2" "test-keypair" {
-#  name       = "my-keypair"
-#  public_key = "ssh-rsa your_public_key"
-# }
-
-# Сгенерирует пару ключей
-resource "openstack_compute_keypair_v2" "test-keypair" {
- name = "my-keypair"
+# описывает сам кластер
+resource "mcs_kubernetes_cluster" "mycluster" {
+  name                = var.k8s-instance-name
+  cluster_template_id = data.mcs_kubernetes_clustertemplate.clst1.id
+  subnet_id           = openstack_networking_subnet_v2.k8s-subnetwork.id
+  network_id          = openstack_networking_network_v2.k8s.id
+  master_flavor       = data.openstack_compute_flavor_v2.k8s.id
+  keypair             = "terraform_keypair"
+  availability_zone   = "MS1"
+  floating_ip_enabled = true
+  master_count        = var.k8s-master_count
+  # volume_type         = var.k8s-type-disk
 }
 
-# описывает Node Group кластера. У одного кластера может быть много Node Groups, но в крайнем случае может и не быть ни одной Node Group
+# описывает Node Group кластера
 resource "mcs_kubernetes_node_group" "myng" {
-  cluster_id = mcs_kubernetes_cluster.mycluster.id
-  node_count = 1
+  cluster_id  = mcs_kubernetes_cluster.mycluster.id
+  node_count  = var.k8s-node_count
+  flavor_id   = var.k8s-node-flavor-id
+  volume_size = var.k8s-node-disk-size
+  volume_type = var.k8s-node-disk-type
 }
 
-# Чтение существующих ресурсов
-# data "openstack_networking_network_v2" "k8s_network" {
-#  name = "your_network_name"
-# }
-#
-# data "openstack_networking_subnet_v2" "k8s_subnet" {
-#  name = "your_subnet_name"
-# }
+# создаем ключевую пару
+resource "openstack_compute_keypair_v2" "terraform_keypair" {
+  name       = "terraform-keypair"
+  public_key = file(var.ssh-public-key-path)
+}
 
 # Создание новых ресурсов
 resource "openstack_networking_network_v2" "k8s" {
@@ -97,16 +94,4 @@ resource "openstack_networking_router_v2" "k8s" {
 resource "openstack_networking_router_interface_v2" "k8s" {
   router_id = openstack_networking_router_v2.k8s.id
   subnet_id = openstack_networking_subnet_v2.k8s-subnetwork.id
-}
-
-# описывает сам кластер
-resource "mcs_kubernetes_cluster" "mycluster" {
-  name                = "terracluster"
-  cluster_template_id = data.mcs_kubernetes_clustertemplate.ct1.id
-  subnet_id           = "k8s-subnet"
-  network_id          = "k8s-net"
-  master_flavor       = data.openstack_compute_flavor_v2.k8s.id
-  keypair             = "my-keypair"
-  availability_zone   = "MS1"
-  floating_ip_enabled = true
 }
